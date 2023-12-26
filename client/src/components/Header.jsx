@@ -51,7 +51,7 @@ export default function Header() {
             </Navbar.Link>
             <Navbar.Link active={path ==="/dashboard"} as={'div'} >
                 <Link to='/dashboard'>
-                    Projects
+                    TimeLine
                 </Link>
             </Navbar.Link>
         </Navbar.Collapse>
