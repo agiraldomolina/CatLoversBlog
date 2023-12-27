@@ -6,7 +6,7 @@ export default function Component() {
   return (
     <Footer
         container
-        className='border border-t-8 border-orange-400'
+        className='border border-t-8 border-orange-400 flex justify-between items-center py-4'
     >
         <div className="w-full max-w-7xl mx-auto">
             <div className="flex justify-between">
@@ -24,7 +24,7 @@ export default function Component() {
                 >
                     <div className="gap-1">
                         <Footer.Title title='Legal'/>
-                        <Footer.LinkGroup col className='m-0'>
+                        <Footer.LinkGroup col className='m-0 p-0'>
                             <Footer.Link
                                 href='#'
                             >
