@@ -1,13 +1,17 @@
 import { Alert, Button, Label, Spinner, TextInput} from 'flowbite-react'
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { FaEye, FaEyeSlash } from'react-icons/fa'
+import {HiMail} from'react-icons/hi'
 
 export default function SignUp() {
   const navigate = useNavigate();
   const [forData, setFormData] = useState({});
   const [ loading, setLoading ] = useState(false);
   const [ errorMessage, setErrorMessage ] = useState(null);
-  const handleCange= (event) => {
+  const [ showPassword, setShowPassword ] = useState(true);
+
+  const handleChange= (event) => {
     setFormData({...forData, [event.target.id]: event.target.value.trim()})
   }
   console.log(forData)
@@ -56,50 +60,63 @@ export default function SignUp() {
 
         </div>
       {/* right side */}
-        <div className="flex-1">
-        <form 
-          className='flex flex-col gap-4'
-          onSubmit={handleSubmit}
-          >
+      <div className="flex-1">
+          <form 
+            className='flex flex-col gap-4'
+            onSubmit={handleSubmit}>
             <div>
               <Label value='Your Username' />
               <TextInput
                 type='text'
-                placeholder='User name'
+                placeholder='Username'
                 id='username'
-                onChange={handleCange}
+                onChange={handleChange}
               />
             </div>
-            <div>
+            <div className='mb-2 block'>
               <Label value='Your Email' />
               <TextInput
-                type='text'
+                type='email'
+                rightIcon={HiMail}
                 placeholder='Email'
                 id='email'
-                onChange={handleCange}
+                onChange={handleChange}
               />
             </div>
             <div>
-              <Label value='Your Password' />
-              <TextInput
-                type='password'
-                placeholder='Password'
-                id='password'
-                onChange={handleCange}
-              />
+              <Label value='Your username' />
+              <div onClick={() => setShowPassword(!showPassword)}>
+              {showPassword ? (
+                <TextInput
+                  type="text"
+                  placeholder="Password"
+                  id="password"
+                  rightIcon={FaEye}
+                  onChange={handleChange}
+                />
+              ) : (
+                <TextInput
+                  type="password"
+                  placeholder="Password"
+                  id="password"
+                  rightIcon={FaEyeSlash}
+                  onChange={handleChange}
+                />
+              )}
+            </div>
             </div>
             <Button 
-              gradientDuoTone='pinkToOrange' 
+              gradientDuoTone='pinkToOrange'  
               type='submit'
               disabled={loading}
             >
               {
                 loading? (
                   <>
-                  <Spinner size='sm' />
-                  <span className='pl-3'>Loading...</span>
+                    <Spinner size='sm'/>
+                    <span className='pl-3'>Loading...</span>
                   </>
-                ):(
+                ) : (
                   'Sign Up'
                 )
               }
@@ -107,16 +124,13 @@ export default function SignUp() {
           </form>
           <div className='flex gap-2 text-sm mt-5'>
             <span>Have an account?</span>
-            <Link to='/sig-in' className='text-blue-500'>
+            <Link to='/sign-in' className='text-blue-500'>
               Sign In
             </Link>
           </div>
           {
             errorMessage && (
-              <Alert
-                className='mt-5'
-                color='failure'
-              >
+              <Alert className='mt-5' color='failure'>
                 {errorMessage}
               </Alert>
             )
