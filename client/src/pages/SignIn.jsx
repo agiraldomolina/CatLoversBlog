@@ -10,6 +10,8 @@ import{
   signInSuccess,
   signInFailure
 } from '../redux/user/userSlice'
+import OAuth from '../components/OAuth'
+
 
 export default function SignIn() {
   const navigate = useNavigate();
@@ -65,7 +67,7 @@ export default function SignIn() {
             className='font-bold dark:text-white text-4xl'>
             <span
                 className='px-2 py-1 bg-gradient-to-r from-indigo-500 via-pink-500 to-orange-500 rounded-lg text-white'
-            >  Alba's  </span>
+            > CatLover's  </span>
             Blog
         </Link>
         <p className='text-sm mt-5'>
@@ -126,6 +128,7 @@ export default function SignIn() {
                 )
               }
             </Button>
+            <OAuth/>
           </form>
           <div className='flex gap-2 text-sm mt-5'>
             <span>Dont have an account?</span>
