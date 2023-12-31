@@ -28,8 +28,7 @@ export default function SignIn() {
     // Ths code allow to read new value from the input and keep the values of the others inputs
     setFormData({...formData, [event.target.id]: event.target.value.trim() })
   }
-  console.log(formData)
-  console.log(formData)
+  //console.log(formData)
   const handleSubmit = async(event) => {
     event.preventDefault();
     if (!formData.email ||!formData.password) {
