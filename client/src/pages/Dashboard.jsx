@@ -21,9 +21,7 @@ export default function Dashboard() {
         <DashSidebar/>
       </div>
       {/* Profile... */}
-      <div className="div">
         {tab === 'profile' && <DashProfile/> }
-      </div>
     </div>
   )
 }
