@@ -23,12 +23,12 @@ export const signup = catchAsync(async(req,res,next)=>{
 export const signin = catchAsync(async(req,res,next)=>{
     //read email and password from body
     const{email,password} = req.body;
-    console.log(email,password);
+    //console.log(email,password);
     if(!email ||!password || email === '' || password === '') return next(errorHandler(400, 'All fields are required'));
 
     // find user by email
     const user = await User.findOne({email});
-    console.log(user);
+    console.log(user._id);
 
     // check if user exists and password is correct
     if (!user || !await user.correctPassword(password,user.password)) return next(errorHandler(401, 'Invalid credentials'));
