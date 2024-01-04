@@ -39,8 +39,10 @@ export const updateUser = catchAsync(async(req, res, next) => {
 });
 
 export const deleteUser = catchAsync(async(req, res, next) => {
+    // console.log('userId from params: ' + req.params.userId);
+    //console.log ('userId from user: ' + req.user.id);
     // Check is user is logged in and is the same as req.user._id
-    if (req.user._id !== req.params.userId) return next(errorHandler(403, 'You are not authorized to delete this user!'));
+    if (req.user.id !== req.params.userId) return next(errorHandler(403, 'You are not authorized to delete this user!'));
     // Delete user from database
     const deletedUser = await User.findByIdAndDelete(req.params.userId);
     // delete cookie
