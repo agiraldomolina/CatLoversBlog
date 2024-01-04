@@ -3,9 +3,11 @@ import { useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { getDownloadURL, getStorage, ref, uploadBytesResumable} from 'firebase/storage'
 import {app} from '../firebase'
-import { HiInformationCircle } from 'react-icons/hi'
+import { HiInformationCircle, HiXCircle } from 'react-icons/hi'
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
+import {updateStart, updateSuccess, updateFailure} from '../redux/user/userSlice';
+import { useDispatch } from 'react-redux';
 
 
 export default function DashProfile() {
@@ -15,6 +17,11 @@ export default function DashProfile() {
   const [imageFileUrl, setImageFileUrl] = useState(null)
   const [imageFileUploadProgress, setImageFileUploadProgress] = useState(null)
   const [ imageUploadError, setImageUploadError ] = useState(null)
+  const [ imageFileUploading, setImageFileUploading ] = useState(false)
+  const [ updateUserSuccess, setUpdateUserSuccess ] = useState(null)
+  const [ updateuserError, setUpdateuserError ] = useState(null)
+  const [formData, setFormData] = useState({})
+  const dispatch = useDispatch()
   // create a reference to the file input element
   const filePickerRef = useRef()
 
@@ -32,6 +39,7 @@ useEffect(() => {
 }, [imageFile]);
 
 const uploadImage = async () => {
+  setImageFileUploading(true)
   setImageUploadError(null)
   const storage = getStorage(app)
   const fileName =new Date().getTime()+ imageFile.name
@@ -50,13 +58,58 @@ const uploadImage = async () => {
       setImageFileUploadProgress(null)
       setImageFileUrl(null)
       setImageFile(null)
+      setImageFileUploading(false)
     },
     () => {
       getDownloadURL(uploadTask.snapshot.ref).then((downLoadURL) => {
         setImageFileUrl(downLoadURL)
+        setFormData({...formData, profilePicture: downLoadURL })
+        setImageFileUploading(false)
+        setUpdateuserError(null)
       });
     }
   )
+}
+
+const handleChange = (event) => {
+  setFormData({...formData, [event.target.id]: event.target.value })
+}
+//console.log(formData)
+
+const handleSubmit = async (event) => {
+  event.preventDefault();
+  setUpdateUserSuccess(null)
+  setUpdateuserError(null)
+  if (Object.keys(formData).length === 0) {
+    setUpdateuserError('No changes made')
+    return
+  }
+  if(imageFileUploading){
+    setUpdateuserError('Please wait while image is uploading')
+    return;
+  }
+  try {
+    dispatch(updateStart());
+    //console.log('current user from dashboard profile: ' +  currentUser._id)
+    const response = await fetch(`/api/user/update/${currentUser._id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(formData)
+    });
+    const data = await response.json();
+    if(!response.ok) {
+      dispatch(updateFailure(data.message));
+      setUpdateuserError(data.message);
+    }else{
+      dispatch(updateSuccess(data));
+      setUpdateUserSuccess("User's profile updated successfully")
+    }
+  } catch (error) {
+    dispatch(updateFailure(error.message));
+    setUpdateuserError(error.message);
+  }
 }
 
   return (
@@ -66,7 +119,10 @@ const uploadImage = async () => {
       >
         Profile
       </h1>
-      <form className='flex flex-col gap-4'>
+      <form 
+        className='flex flex-col gap-4'
+        onSubmit={handleSubmit}
+      >
         <input 
           type="file"
           accept='image/*'
@@ -123,17 +179,20 @@ const uploadImage = async () => {
           id='username'
           placeholder='username'
           defaultValue={currentUser.username}
+          onChange={handleChange}
         />
         <TextInput
           type='email'
           id='email'
           placeholder='email'
           defaultValue={currentUser.email}
+          onChange={handleChange}
         />
         <TextInput
           type='password'
           id='password'
           placeholder='password'
+          onChange={handleChange}
         />
         <Button
           type='submit'
@@ -147,6 +206,24 @@ const uploadImage = async () => {
         <span className='cursor-pointer'>Delete Account</span>
         <span className='cursor-pointer'>Sign Out</span>
       </div>
+      {updateUserSuccess && (
+        <Alert
+          color='success'
+          icon={HiInformationCircle}
+          rounded
+        >
+          {updateUserSuccess}
+        </Alert>
+      )}
+      {updateuserError && (
+        <Alert
+          color='failure'
+          icon={HiXCircle}
+          rounded
+        >
+          {updateuserError}
+        </Alert>
+      )}
     </div>
   )
 }
