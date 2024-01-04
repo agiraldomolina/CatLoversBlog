@@ -51,4 +51,11 @@ export const deleteUser = catchAsync(async(req, res, next) => {
     res
     .status(200)
     .json('User deleted successfully')
-})
+});
+
+export const signOut = catchAsync(async(req, res, next) => {
+    res
+    .clearCookie('access-token')
+    .status(200)
+    .json('User signed out successfully');
+});
