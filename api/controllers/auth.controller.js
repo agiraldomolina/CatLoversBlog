@@ -48,9 +48,8 @@ export const signin = catchAsync(async(req,res,next)=>{
 });
 
 export const googleAuth = async (req, res, next) => {
-  console.log('Hello from google');
     const { email, name, googlePhotoUrl } = req.body;
-    console.log(email, name, googlePhotoUrl);
+    //console.log(email, name, googlePhotoUrl);
     try {
       const user = await User.findOne({ email });
       if (user) {
